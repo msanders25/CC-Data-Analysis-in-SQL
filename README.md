@@ -9,7 +9,7 @@ The original data can be found at this link:
  - *[kaggle.com](https://www.kaggle.com/datasets/ananta/credit-card-data?select=CreditCardData.xlsx)*
  - Author: Anant Prakash Awasthi
 
-Review the SQL script *[HERE](https://github.com/msanders25/Crime-Data-Analysis-in-Python/blob/main/Crime%20Data%20Analysis.ipynb)*
+Review the SQL script *[HERE](https://github.com/msanders25/CC-Data-Analysis-in-SQL/blob/main/cc_data_sql_project.sql)*
 
 ## Insights
 The queries written in the script provide info on the following:
