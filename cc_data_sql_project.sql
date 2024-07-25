@@ -3,8 +3,8 @@
 
 -- 1) First high level join to view combined data.
 SELECT 
-	transaction_id, 
-	transaction_value, 
+    transaction_id, 
+    transaction_value, 
     `month`, 
     transaction_date, 
     card_number, 
@@ -16,28 +16,28 @@ SELECT
     customer_segment
 FROM transactions
 JOIN card_base
-	ON transactions.credit_card_id = card_base.card_number
+    ON transactions.credit_card_id = card_base.card_number
 JOIN customers
-	ON card_base.cust_id = customers.cust_id
+    ON card_base.cust_id = customers.cust_id
 ORDER BY 4;
 
 -- 2) Average transaction value by card family.
 WITH cc_data AS
 (
 SELECT 
-	transaction_id,
-	transaction_value, 
+    transaction_id,
+    transaction_value, 
     card_family,  
     card_base.cust_id
 FROM transactions
 JOIN card_base
-	ON transactions.credit_card_id = card_base.card_number
+    ON transactions.credit_card_id = card_base.card_number
 JOIN customers
-	ON card_base.cust_id = customers.cust_id
+    ON card_base.cust_id = customers.cust_id
 ORDER BY 4
 )
 SELECT 
-	card_family, 
+    card_family, 
     COUNT(*) AS num_of_transactions, 
     ROUND(avg(transaction_value), 0) AS avg_transaction_value
 FROM cc_data
@@ -48,19 +48,19 @@ ORDER BY 3 DESC;
 WITH cc_data AS
 (
 SELECT 
-	transaction_id, 
-	transaction_value, 
+    transaction_id, 
+    transaction_value, 
     card_base.cust_id, 
     customer_segment
 FROM transactions
 JOIN card_base
-	ON transactions.credit_card_id = card_base.card_number
+    ON transactions.credit_card_id = card_base.card_number
 JOIN customers
-	ON card_base.cust_id = customers.cust_id
+    ON card_base.cust_id = customers.cust_id
 ORDER BY 4
 )
 SELECT 
-	customer_segment, 
+    customer_segment, 
     COUNT(*) AS num_of_transactions, 
     ROUND(avg(transaction_value), 0) AS avg_transaction_value
 FROM cc_data
@@ -71,19 +71,19 @@ ORDER BY 3 DESC;
 WITH cc_data AS
 (
 SELECT 
-	transaction_id, 
-	transaction_value, 
+    transaction_id, 
+    transaction_value, 
     `month`, 
     card_base.cust_id 
 FROM transactions
 JOIN card_base
-	ON transactions.credit_card_id = card_base.card_number
+    ON transactions.credit_card_id = card_base.card_number
 JOIN customers
-	ON card_base.cust_id = customers.cust_id
+    ON card_base.cust_id = customers.cust_id
 ORDER BY 4
 )
 SELECT 
-	`month`, 
+    `month`, 
     COUNT(*) AS num_of_transactions, 
     ROUND(avg(transaction_value), 0) AS avg_transaction_value
 FROM cc_data
@@ -94,19 +94,19 @@ ORDER BY 3 DESC;
 WITH cc_data AS
 (
 SELECT 
-	transaction_id, 
-	transaction_value,  
+    transaction_id, 
+    transaction_value,  
     card_base.cust_id, 
     age_group
 FROM transactions
 JOIN card_base
-	ON transactions.credit_card_id = card_base.card_number
+    ON transactions.credit_card_id = card_base.card_number
 JOIN customers
-	ON card_base.cust_id = customers.cust_id
+    ON card_base.cust_id = customers.cust_id
 ORDER BY 4
 )
 SELECT 
-	age_group, 
+    age_group, 
     COUNT(*) AS num_of_transactions, 
     ROUND(avg(transaction_value), 0) AS avg_transaction_value
 FROM cc_data
@@ -117,20 +117,20 @@ ORDER BY 3 DESC;
 WITH cc_data AS
 (
 SELECT 
-	transaction_id, 
-	transaction_value, 
+    transaction_id, 
+    transaction_value, 
     card_base.cust_id, 
     age_group, 
     customer_segment
 FROM transactions
 JOIN card_base
-	ON transactions.credit_card_id = card_base.card_number
+    ON transactions.credit_card_id = card_base.card_number
 JOIN customers
-	ON card_base.cust_id = customers.cust_id
+    ON card_base.cust_id = customers.cust_id
 ORDER BY 4
 )
 SELECT 
-	customer_segment, 
+    customer_segment, 
     age_group,
     COUNT(*) AS num_of_transactions, 
     ROUND(avg(transaction_value), 0) AS avg_transaction_value
@@ -140,30 +140,31 @@ ORDER BY 1;
 
 -- 7) Running 7 day average of daily average transaction value.
 SELECT *, 
-	ROUND(AVG(daily_avg_tvalue) OVER (PARTITION BY WEEK(transaction_date) ORDER BY transaction_date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW), 0) AS running_7_day_avg, 
+    ROUND(AVG(daily_avg_tvalue) OVER (PARTITION BY WEEK(transaction_date) ORDER BY transaction_date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW), 0) AS running_7_day_avg, 
     WEEK(transaction_date) AS week_number
 FROM
 (
-	SELECT 
-		transaction_date, 
+    SELECT 
+	transaction_date, 
         ROUND(AVG(transaction_value), 0) AS daily_avg_tvalue
-	FROM transactions
-	GROUP BY transaction_date
-	ORDER BY 1
+    FROM transactions
+    GROUP BY transaction_date
+    ORDER BY 1
 ) 
 AS subq;
 
 -- 8) Running monthly average by day of daily average transaction value.
 SELECT *, 
-	ROUND(AVG(daily_avg_tvalue) OVER (PARTITION BY `month` ORDER BY transaction_date), 0) AS running_month_avg
+    ROUND(AVG(daily_avg_tvalue) OVER (PARTITION BY `month` ORDER BY transaction_date), 0) AS running_month_avg
 FROM
 (
-	SELECT transaction_date, 
-		ROUND(AVG(transaction_value), 0) AS daily_avg_tvalue,
+    SELECT 
+	transaction_date, 
+	ROUND(AVG(transaction_value), 0) AS daily_avg_tvalue,
         `month`
-	FROM transactions
-	GROUP BY transaction_date, `month`
-	ORDER BY 1
+    FROM transactions
+    GROUP BY transaction_date, `month`
+    ORDER BY 1
 ) 
 AS subq
 ORDER BY 1;
@@ -171,22 +172,25 @@ ORDER BY 1;
 -- 9) Top 5 paying customers by month.
 WITH top5 AS
 (
-SELECT cust_id, `month`, SUM(transaction_value) AS total_spent
+SELECT 
+    cust_id, 
+    `month`, 
+    SUM(transaction_value) AS total_spent
 FROM
 (
-	SELECT 
-		transaction_value, 
-		`month`, 
-		card_base.cust_id, 
-		card_family,
-		age,
-		age_group, 
-		customer_segment
-	FROM transactions
-	JOIN card_base
-		ON transactions.credit_card_id = card_base.card_number
-	JOIN customers
-		ON card_base.cust_id = customers.cust_id
+    SELECT 
+	transaction_value, 
+	`month`, 
+	card_base.cust_id, 
+	card_family,
+	age,
+	age_group, 
+	customer_segment
+    FROM transactions
+    JOIN card_base
+	ON transactions.credit_card_id = card_base.card_number
+    JOIN customers
+	ON card_base.cust_id = customers.cust_id
 ) AS subq
 GROUP BY cust_id, `month`
 ORDER BY 1
@@ -194,12 +198,12 @@ ORDER BY 1
 SELECT *
 FROM 
 (
-	SELECT *, DENSE_RANK() OVER (PARTITION BY `month` ORDER BY total_spent DESC) AS ranking
-	FROM top5
+    SELECT *, DENSE_RANK() OVER (PARTITION BY `month` ORDER BY total_spent DESC) AS ranking
+    FROM top5
 ) AS subq
 WHERE ranking <= 5
 ORDER BY case `month`
-			WHEN 'Jan' THEN 1
+	    WHEN 'Jan' THEN 1
             WHEN 'Feb' THEN 2
             WHEN 'Mar' THEN 3
             WHEN 'Apr' THEN 4
@@ -211,22 +215,22 @@ ORDER BY case `month`
             WHEN 'Oct' THEN 10
             WHEN 'Nov' THEN 11
             WHEN 'Dec' THEN 12
-		END,
+	END,
         total_spent DESC;
         
 -- 10) Customer count and average transaction value by customer segment by age group.
 WITH ccholders AS
 (
 SELECT 
-	count(*) AS customer_count, 
+    COUNT(*) AS customer_count, 
     ROUND(AVG(transaction_value), 0) AS avg_tvalue, 
     customer_segment, 
     age_group
 FROM transactions
 JOIN card_base
-	ON transactions.credit_card_id = card_base.card_number
+    ON transactions.credit_card_id = card_base.card_number
 JOIN customers
-	ON card_base.cust_id = customers.cust_id
+    ON card_base.cust_id = customers.cust_id
 GROUP BY customer_segment, age_group
 ORDER BY 3 
 )
@@ -237,14 +241,14 @@ FROM ccholders;
 SELECT COUNT(*)
 FROM transactions
 LEFT JOIN fraud_base
-	ON transactions.transaction_id = fraud_base.transaction_id
+    ON transactions.transaction_id = fraud_base.transaction_id
 WHERE fraud_flag IS NULL;
 
 -- 12) Number of fraud transactions, sum of fraud transaction value, and average fraud transaction value by month.
 WITH tfraud AS
 (
 SELECT 
-	customers.cust_id,
+    customers.cust_id,
     age_group,
     customer_segment,
     card_family,
@@ -254,21 +258,21 @@ SELECT
     fraud_flag
 FROM customers
 JOIN card_base
-	ON customers.cust_id = card_base.cust_id
+    ON customers.cust_id = card_base.cust_id
 JOIN transactions
-	ON card_base.card_number = transactions.credit_card_id
+    ON card_base.card_number = transactions.credit_card_id
 JOIN fraud_base
-	ON transactions.transaction_id = fraud_base.transaction_id
+    ON transactions.transaction_id = fraud_base.transaction_id
 )
 SELECT 
-	`month`, 
+    `month`, 
     COUNT(*) AS num_transactions, 
     SUM(transaction_value) AS total_spent, 
     ROUND(AVG(transaction_value), 0) AS avg_tvalue
 FROM tfraud
 GROUP BY `month`
 ORDER BY CASE `month`
-			WHEN 'Jan' THEN 1
+	    WHEN 'Jan' THEN 1
             WHEN 'Feb' THEN 2
             WHEN 'Mar' THEN 3
             WHEN 'Apr' THEN 4
@@ -280,13 +284,13 @@ ORDER BY CASE `month`
             WHEN 'Oct' THEN 10
             WHEN 'Nov' THEN 11
             WHEN 'Dec' THEN 12
-		END;
+	END;
 
 -- 13) Number of fraud transactions, sum of fraud transaction value, and average fraud transaction value by card family.
 WITH tfraud AS
 (
 SELECT 
-	customers.cust_id,
+    customers.cust_id,
     age_group,
     customer_segment,
     card_family,
@@ -296,14 +300,14 @@ SELECT
     fraud_flag
 FROM customers
 JOIN card_base
-	ON customers.cust_id = card_base.cust_id
+    ON customers.cust_id = card_base.cust_id
 JOIN transactions
-	ON card_base.card_number = transactions.credit_card_id
+    ON card_base.card_number = transactions.credit_card_id
 JOIN fraud_base
-	ON transactions.transaction_id = fraud_base.transaction_id
+    ON transactions.transaction_id = fraud_base.transaction_id
 )
 SELECT 
-	card_family, 
+    card_family, 
     COUNT(*) AS num_transactions, 
     SUM(transaction_value) AS total_spent, 
     ROUND(AVG(transaction_value), 0) AS avg_tvalue
@@ -315,7 +319,7 @@ ORDER BY 2 DESC;
 WITH tfraud AS
 (
 SELECT 
-	customers.cust_id,
+    customers.cust_id,
     age_group,
     customer_segment,
     card_family,
@@ -325,14 +329,14 @@ SELECT
     fraud_flag
 FROM customers
 JOIN card_base
-	ON customers.cust_id = card_base.cust_id
+    ON customers.cust_id = card_base.cust_id
 JOIN transactions
-	ON card_base.card_number = transactions.credit_card_id
+    ON card_base.card_number = transactions.credit_card_id
 JOIN fraud_base
-	ON transactions.transaction_id = fraud_base.transaction_id
+    ON transactions.transaction_id = fraud_base.transaction_id
 )
 SELECT 
-	customer_segment, 
+    customer_segment, 
     COUNT(*) AS num_transactions, 
     SUM(transaction_value) AS total_spent, 
     ROUND(AVG(transaction_value), 0) AS avg_tvalue
@@ -344,7 +348,7 @@ ORDER BY 2 DESC;
 WITH tfraud AS
 (
 SELECT 
-	customers.cust_id,
+    customers.cust_id,
     age_group,
     customer_segment,
     card_family,
@@ -354,14 +358,14 @@ SELECT
     fraud_flag
 FROM customers
 JOIN card_base
-	ON customers.cust_id = card_base.cust_id
+    ON customers.cust_id = card_base.cust_id
 JOIN transactions
-	ON card_base.card_number = transactions.credit_card_id
+    ON card_base.card_number = transactions.credit_card_id
 JOIN fraud_base
-	ON transactions.transaction_id = fraud_base.transaction_id
+    ON transactions.transaction_id = fraud_base.transaction_id
 )
 SELECT 
-	age_group, 
+    age_group, 
     COUNT(*) AS num_transactions, 
     SUM(transaction_value) AS total_spent, 
     ROUND(AVG(transaction_value), 0) AS avg_tvalue
