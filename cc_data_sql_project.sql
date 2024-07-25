@@ -39,7 +39,7 @@ ORDER BY 4
 SELECT 
     card_family, 
     COUNT(*) AS num_of_transactions, 
-    ROUND(avg(transaction_value), 0) AS avg_transaction_value
+    ROUND(AVG(transaction_value), 0) AS avg_transaction_value
 FROM cc_data
 GROUP BY card_family
 ORDER BY 3 DESC;
@@ -108,7 +108,7 @@ ORDER BY 4
 SELECT 
     age_group, 
     COUNT(*) AS num_of_transactions, 
-    ROUND(avg(transaction_value), 0) AS avg_transaction_value
+    ROUND(AVG(transaction_value), 0) AS avg_transaction_value
 FROM cc_data
 GROUP BY age_group
 ORDER BY 3 DESC;
@@ -133,7 +133,7 @@ SELECT
     customer_segment, 
     age_group,
     COUNT(*) AS num_of_transactions, 
-    ROUND(avg(transaction_value), 0) AS avg_transaction_value
+    ROUND(AVG(transaction_value), 0) AS avg_transaction_value
 FROM cc_data
 GROUP BY customer_segment, age_group
 ORDER BY 1;
